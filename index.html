@@ -21,15 +21,15 @@
 </main>
 
 <script>
-  // ---- Edit these defaults, or override them in the URL: ?date=2027-01-01&title=Our%20trip ----
-  const DEFAULT_DATE  = "2026-12-20";  // YYYY-MM-DD, local time
+  // Edit these defaults
+  const DEFAULT_DATE  = "2026-12-20";  // YYYY-MM-DD
   const DEFAULT_TITLE = "COUNTDOWN";
 
   const params = new URLSearchParams(location.search);
   const dateStr = params.get("date") || DEFAULT_DATE;
   const title   = params.get("title") || DEFAULT_TITLE;
 
-  // Parse as local midnight (new Date("2027-01-01") would use UTC and be off by a day)
+  // Parse as local midnight
   const [y, m, d] = dateStr.split("-").map(Number);
   const target = new Date(y, m - 1, d, 0, 0, 0);
 
