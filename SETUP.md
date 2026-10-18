@@ -24,3 +24,7 @@ If the table already exists, run
 [`supabase-person-migration.sql`](./supabase-person-migration.sql) in the
 Supabase SQL Editor. New updates can then be labeled **Boyfriend** or
 **Girlfriend**. Older updates remain visible as “Earlier update.”
+
+Updates older than 7 days are automatically removed for the current countdown
+link when the page loads. The **Clear today&rsquo;s updates** button remains
+available for immediate manual cleanup.

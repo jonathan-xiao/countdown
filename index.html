@@ -56,6 +56,9 @@
       <button type="submit"><span aria-hidden="true">+</span> Add update</button>
     </form>
     <p class="update-status" id="updateStatus" role="status" aria-live="polite"></p>
+    <button class="clear-updates" id="clearUpdates" type="button">
+      Clear today&rsquo;s updates
+    </button>
     <div class="updates-table-wrap">
       <table class="updates-table">
         <caption class="sr-only">Today's updates</caption>
@@ -137,10 +140,12 @@
   const updatesList = $("updatesList");
   const emptyUpdates = $("emptyUpdates");
   const updateStatus = $("updateStatus");
+  const clearUpdates = $("clearUpdates");
   const updatesSection = $("updatesSection");
   const updatesToggle = $("updatesToggle");
   const updateChannel = location.pathname + location.search;
   const updatesVisibilityKey = "countdown-updates-visible";
+  const UPDATE_RETENTION_DAYS = 7;
   const isSupabaseConfigured =
     supabaseUrl && anonKeyIsConfigured(supabaseAnonKey) &&
     !supabaseUrl.includes("YOUR_PROJECT_ID");
@@ -167,6 +172,17 @@
       today.getFullYear(),
       pad(today.getMonth() + 1),
       pad(today.getDate())
+    ].join("-");
+  };
+
+  const getRetentionCutoff = () => {
+    const cutoff = new Date();
+    cutoff.setHours(0, 0, 0, 0);
+    cutoff.setDate(cutoff.getDate() - UPDATE_RETENTION_DAYS);
+    return [
+      cutoff.getFullYear(),
+      pad(cutoff.getMonth() + 1),
+      pad(cutoff.getDate())
     ].join("-");
   };
 
@@ -226,6 +242,22 @@
 
     updateStatus.textContent = "";
     renderUpdates(data);
+  }
+
+  async function removeExpiredUpdates() {
+    if (!supabaseClient) {
+      return;
+    }
+
+    const { error } = await supabaseClient
+      .from("countdown_updates")
+      .delete()
+      .eq("channel", updateChannel)
+      .lt("update_date", getRetentionCutoff());
+
+    if (error) {
+      console.error("Could not remove expired updates:", error);
+    }
   }
 
   updateForm.addEventListener("submit", async (event) => {
@@ -301,13 +333,44 @@
     }
   });
 
+  clearUpdates.addEventListener("click", async () => {
+    if (!supabaseClient || !window.confirm("Delete all of today’s updates?")) {
+      return;
+    }
+
+    clearUpdates.disabled = true;
+    updateStatus.textContent = "Clearing today’s updates...";
+
+    try {
+      const { error } = await supabaseClient
+        .from("countdown_updates")
+        .delete()
+        .eq("channel", updateChannel)
+        .eq("update_date", getToday());
+
+      if (error) {
+        updateStatus.textContent = "Could not clear updates. Please try again.";
+        console.error("Could not clear updates:", error);
+        return;
+      }
+
+      updateStatus.textContent = "Today’s updates cleared.";
+      await loadUpdates();
+    } catch (error) {
+      updateStatus.textContent = "Could not clear updates. Please try again.";
+      console.error("Could not clear updates:", error);
+    } finally {
+      clearUpdates.disabled = false;
+    }
+  });
+
   const savedVisibility = localStorage.getItem(updatesVisibilityKey);
   setUpdatesVisibility(savedVisibility !== "false");
   updatesToggle.addEventListener("click", () => {
     setUpdatesVisibility(updatesSection.hidden);
   });
 
-  loadUpdates();
+  removeExpiredUpdates().finally(loadUpdates);
   setInterval(loadUpdates, 30000);
 </script>
 </body>

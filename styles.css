@@ -26,7 +26,7 @@
   }
 
   .update-person--boyfriend {
-    color: #9bb5df;
+    color: #8fb4ff;
   }
 
   .update-person--girlfriend {
@@ -323,6 +323,38 @@ h1 {
   text-align: center;
 }
 
+.clear-updates {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  margin: 0.2rem auto 1rem;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: system-ui, sans-serif;
+  font-size: 0.72rem;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--muted) 45%, transparent);
+  text-underline-offset: 0.2em;
+  transition: color 160ms ease;
+}
+
+.clear-updates:hover {
+  color: #c94c5b;
+}
+
+.clear-updates:focus-visible {
+  border-radius: 0.25rem;
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.clear-updates:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
 .updates-table-wrap {
   width: min(100%, 560px);
   margin: 0 auto;
@@ -378,7 +410,7 @@ h1 {
 }
 
 .update-person--boyfriend {
-  color: #1d3557;
+  color: #5b8def;
 }
 
 .update-person--girlfriend {
