@@ -66,23 +66,28 @@ main {
 }
 
 .updates-toggle {
+  appearance: none;
+  -webkit-appearance: none;
   display: block;
   margin: 1rem auto 0;
-  border: 1px solid var(--line);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
   border-radius: 999px;
-  padding: 0.55rem 0.9rem;
-  background: var(--surface);
-  color: var(--muted);
+  padding: 0.6rem 1rem;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface-solid));
+  color: var(--accent);
   cursor: pointer;
   font-family: system-ui, sans-serif;
   font-size: 0.75rem;
   font-weight: 600;
-  transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+  line-height: 1;
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease,
+    transform 160ms ease;
 }
 
 .updates-toggle:hover {
   border-color: var(--accent);
-  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface-solid));
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 16%, transparent);
   transform: translateY(-1px);
 }
 
@@ -228,9 +233,12 @@ h1 {
 }
 
 .update-form button {
+  appearance: none;
+  -webkit-appearance: none;
   border: 1px solid color-mix(in srgb, var(--accent) 70%, transparent);
   border-radius: 0.7rem;
   padding: 0.72rem 1rem;
+  background-color: var(--accent);
   background: linear-gradient(135deg, var(--accent), var(--accent-dark));
   color: #fff;
   cursor: pointer;
@@ -334,10 +342,12 @@ h1 {
 }
 
 .delete-update {
+  appearance: none;
+  -webkit-appearance: none;
   border: 0;
   border-radius: 0.45rem;
   padding: 0.35rem 0.5rem;
-  background: transparent;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
   color: var(--muted);
   cursor: pointer;
   font-family: system-ui, sans-serif;
@@ -345,7 +355,7 @@ h1 {
 }
 
 .delete-update:hover {
-  background: #fff0f0;
+  background: color-mix(in srgb, #c34855 12%, transparent);
   color: #c34855;
 }
 
