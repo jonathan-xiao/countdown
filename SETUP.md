@@ -17,3 +17,10 @@ current project is public, anyone with the link can add or delete updates.
 For a new Supabase project, run [`supabase-schema.sql`](./supabase-schema.sql)
 instead. It includes the table, read/insert/delete policies, and realtime
 configuration.
+
+## Existing projects: add user labels
+
+If the table already exists, run
+[`supabase-person-migration.sql`](./supabase-person-migration.sql) in the
+Supabase SQL Editor. New updates can then be labeled **Boyfriend** or
+**Girlfriend**. Older updates remain visible as “Earlier update.”

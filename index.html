@@ -31,9 +31,7 @@
   <section class="updates" id="updatesSection" aria-labelledby="updatesTitle">
     <div class="updates-heading">
       <div>
-        <centre>
         <p class="eyebrow">Daily log</p>
-        </centre>
         <h2 id="updatesTitle">Today&rsquo;s updates</h2>
       </div>
       <span class="updates-badge">Live</span>
@@ -49,6 +47,12 @@
         autocomplete="off"
         required
       >
+      <label class="sr-only" for="updatePerson">Who is this update from?</label>
+      <select id="updatePerson" name="person" required>
+        <option value="" selected disabled>Who?</option>
+        <option value="boyfriend">Boyfriend</option>
+        <option value="girlfriend">Girlfriend</option>
+      </select>
       <button type="submit"><span aria-hidden="true">+</span> Add update</button>
     </form>
     <p class="update-status" id="updateStatus" role="status" aria-live="polite"></p>
@@ -59,6 +63,7 @@
           <tr>
             <th scope="col">Time</th>
             <th scope="col">Update</th>
+            <th scope="col">From</th>
             <th scope="col"><span class="sr-only">Actions</span></th>
           </tr>
         </thead>
@@ -169,10 +174,11 @@
     updatesList.replaceChildren();
     emptyUpdates.hidden = updates.length > 0;
 
-    updates.forEach(({ id, text, created_at }) => {
+    updates.forEach(({ id, text, person, created_at }) => {
       const row = document.createElement("tr");
       const timeCell = document.createElement("td");
       const textCell = document.createElement("td");
+      const personCell = document.createElement("td");
       const actionCell = document.createElement("td");
       const deleteButton = document.createElement("button");
 
@@ -182,12 +188,19 @@
         minute: "2-digit"
       });
       textCell.textContent = text;
+      if (person) {
+        personCell.textContent = person === "boyfriend" ? "Boyfriend" : "Girlfriend";
+        personCell.className = `update-person update-person--${person}`;
+      } else {
+        personCell.textContent = "Earlier update";
+        personCell.className = "update-person update-person--legacy";
+      }
       deleteButton.type = "button";
       deleteButton.className = "delete-update";
       deleteButton.textContent = "Delete";
       deleteButton.setAttribute("aria-label", `Delete update: ${text}`);
       actionCell.append(deleteButton);
-      row.append(timeCell, textCell, actionCell);
+      row.append(timeCell, textCell, personCell, actionCell);
       updatesList.append(row);
     });
   }
@@ -200,7 +213,7 @@
 
     const { data, error } = await supabaseClient
       .from("countdown_updates")
-      .select("id, text, created_at")
+      .select("id, text, person, created_at")
       .eq("channel", updateChannel)
       .eq("update_date", getToday())
       .order("created_at", { ascending: true });
@@ -218,8 +231,9 @@
   updateForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const text = updateInput.value.trim();
+    const person = $("updatePerson").value;
 
-    if (!text || !supabaseClient) {
+    if (!text || !person || !supabaseClient) {
       return;
     }
 
@@ -231,6 +245,7 @@
         .from("countdown_updates")
         .insert({
           text,
+          person,
           channel: updateChannel,
           update_date: getToday(),
           created_at: now.toISOString()
@@ -243,6 +258,7 @@
       }
 
       updateInput.value = "";
+      $("updatePerson").value = "";
       updateStatus.textContent = "Update added.";
       await loadUpdates();
       updateInput.focus();

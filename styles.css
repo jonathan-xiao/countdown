@@ -232,6 +232,28 @@ h1 {
   color: color-mix(in srgb, var(--muted) 82%, transparent);
 }
 
+.update-form select {
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 7rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
+  border-radius: 0.7rem;
+  padding: 0.72rem 2rem 0.72rem 0.8rem;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--accent) 50%) calc(100% - 1rem) 50% / 5px 5px no-repeat,
+    linear-gradient(135deg, var(--accent) 50%, transparent 50%) calc(100% - 0.7rem) 50% / 5px 5px no-repeat,
+    color-mix(in srgb, var(--accent) 7%, var(--surface-solid));
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  outline: 0;
+}
+
+.update-form select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 13%, transparent);
+}
+
 .update-form button {
   appearance: none;
   -webkit-appearance: none;
@@ -329,6 +351,26 @@ h1 {
   text-align: center;
 }
 
+.update-person {
+  font-family: system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.update-person--boyfriend {
+  color: var(--accent);
+}
+
+.update-person--girlfriend {
+  color: #d96b9b;
+}
+
+.update-person--legacy {
+  color: var(--muted);
+  font-weight: 500;
+}
+
 .updates-table tbody tr + tr {
   border-top: 1px solid var(--line);
 }
@@ -392,6 +434,7 @@ h1 {
     flex-direction: column;
   }
 
+  .update-form select,
   .update-form button {
     width: 100%;
   }
