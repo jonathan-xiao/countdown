@@ -24,7 +24,12 @@
     <p class="when" id="when"></p>
   </section>
 
-  <section class="updates" aria-labelledby="updatesTitle">
+  <button class="updates-toggle" id="updatesToggle" type="button"
+    aria-controls="updatesSection" aria-expanded="true">
+    Hide daily updates
+  </button>
+
+  <section class="updates" id="updatesSection" aria-labelledby="updatesTitle">
     <div class="updates-heading">
       <div>
         <p class="eyebrow">Daily log</p>
@@ -126,7 +131,10 @@
   const updatesList = $("updatesList");
   const emptyUpdates = $("emptyUpdates");
   const updateStatus = $("updateStatus");
+  const updatesSection = $("updatesSection");
+  const updatesToggle = $("updatesToggle");
   const updateChannel = location.pathname + location.search;
+  const updatesVisibilityKey = "countdown-updates-visible";
   const isSupabaseConfigured =
     supabaseUrl && anonKeyIsConfigured(supabaseAnonKey) &&
     !supabaseUrl.includes("YOUR_PROJECT_ID");
@@ -136,6 +144,15 @@
 
   function anonKeyIsConfigured(key) {
     return Boolean(key && !key.includes("YOUR_SUPABASE_ANON_KEY"));
+  }
+
+  function setUpdatesVisibility(isVisible) {
+    updatesSection.hidden = !isVisible;
+    updatesToggle.setAttribute("aria-expanded", String(isVisible));
+    updatesToggle.textContent = isVisible
+      ? "Hide daily updates"
+      : "Show daily updates";
+    localStorage.setItem(updatesVisibilityKey, String(isVisible));
   }
 
   const getToday = () => {
@@ -265,6 +282,12 @@
       console.error("Could not delete update:", error);
       deleteButton.disabled = false;
     }
+  });
+
+  const savedVisibility = localStorage.getItem(updatesVisibilityKey);
+  setUpdatesVisibility(savedVisibility !== "false");
+  updatesToggle.addEventListener("click", () => {
+    setUpdatesVisibility(updatesSection.hidden);
   });
 
   loadUpdates();
