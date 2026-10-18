@@ -9,61 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #f2f4f8;
-    --ink: #14213d;
-    --muted: #5d6b86;
-    --accent: #3a5bff;
-    color-scheme: light;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #101a30;
-      --ink: #eef1f8;
-      --muted: #97a4c2;
-      --accent: #8fa4ff;
-      color-scheme: dark;
-    }
-  }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: "Fraunces", Georgia, "Times New Roman", serif;
-    display: grid;
-    place-items: center;
-    padding: env(safe-area-inset-top, 0) 24px env(safe-area-inset-bottom, 0);
-    text-align: center;
-  }
-  main { width: 100%; max-width: 640px; }
-  h1 {
-    font-weight: 500;
-    font-size: clamp(1.4rem, 5vw, 2rem);
-    margin: 0 0 1.5rem;
-    letter-spacing: 0.01em;
-  }
-  .days {
-    font-weight: 300;
-    font-size: clamp(7rem, 34vw, 14rem);
-    line-height: 0.9;
-    font-variant-numeric: tabular-nums;
-    color: var(--accent);
-    margin: 0;
-  }
-  .days-label {
-    font-size: clamp(1.1rem, 4vw, 1.5rem);
-    margin: 0.5rem 0 2rem;
-    color: var(--muted);
-  }
-  .clock {
-    font-size: clamp(1.4rem, 6vw, 2rem);
-    font-variant-numeric: tabular-nums;
-    margin: 0;
-  }
-  .when { margin: 1.5rem 0 0; color: var(--muted); font-size: 1rem; }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <main>
@@ -109,7 +55,7 @@
     if (diff <= 0) {
       const since = Math.floor(-diff / 86400000);
       $("days").textContent = since === 0 ? "Today" : since;
-      $("days").style.fontSize = since === 0 ? "clamp(4rem, 20vw, 8rem)" : "";
+      $("days").classList.toggle("days--today", since === 0);
       $("daysLabel").textContent = since === 0 ? "It’s here." : (since === 1 ? "day since" : "days since");
       $("clock").textContent = "";
       return;
@@ -121,6 +67,7 @@
     const mins = Math.floor((totalSec % 3600) / 60);
     const secs = totalSec % 60;
 
+    $("days").classList.remove("days--today");
     $("days").textContent = days;
     $("daysLabel").textContent = days === 1 ? "day to go" : "days to go";
     $("clock").textContent = pad(hours) + ":" + pad(mins) + ":" + pad(secs);

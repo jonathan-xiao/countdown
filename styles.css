@@ -1,0 +1,80 @@
+:root {
+  --bg: #f2f4f8;
+  --ink: #14213d;
+  --muted: #5d6b86;
+  --accent: #3a5bff;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #101a30;
+    --ink: #eef1f8;
+    --muted: #97a4c2;
+    --accent: #8fa4ff;
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  padding: env(safe-area-inset-top, 0) 24px env(safe-area-inset-bottom, 0);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  text-align: center;
+}
+
+main {
+  width: 100%;
+  max-width: 640px;
+}
+
+h1 {
+  margin: 0 0 1.5rem;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.days {
+  margin: 0;
+  color: var(--accent);
+  font-size: clamp(7rem, 34vw, 14rem);
+  font-weight: 300;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+
+.days--today {
+  font-size: clamp(4rem, 20vw, 8rem);
+}
+
+.days-label {
+  margin: 0.5rem 0 2rem;
+  color: var(--muted);
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+}
+
+.clock {
+  margin: 0;
+  font-size: clamp(1.4rem, 6vw, 2rem);
+  font-variant-numeric: tabular-nums;
+}
+
+.when {
+  margin: 1.5rem 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
