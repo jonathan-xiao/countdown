@@ -15,14 +15,23 @@
 </head>
 <body>
 <main>
-  <h1 id="title"></h1>
-  <p class="days" id="days" aria-live="off">0</p>
-  <p class="days-label" id="daysLabel">days to go</p>
-  <p class="clock" id="clock"></p>
-  <p class="when" id="when"></p>
+  <section class="countdown-card">
+    <p class="eyebrow">Counting down to</p>
+    <h1 id="title"></h1>
+    <p class="days" id="days" aria-live="off">0</p>
+    <p class="days-label" id="daysLabel">days to go</p>
+    <p class="clock" id="clock"></p>
+    <p class="when" id="when"></p>
+  </section>
 
   <section class="updates" aria-labelledby="updatesTitle">
-    <h2 id="updatesTitle">Today</h2>
+    <div class="updates-heading">
+      <div>
+        <p class="eyebrow">Daily log</p>
+        <h2 id="updatesTitle">Today&rsquo;s updates</h2>
+      </div>
+      <span class="updates-badge">Live</span>
+    </div>
     <form class="update-form" id="updateForm">
       <label class="sr-only" for="updateInput">Add an update</label>
       <input
@@ -30,11 +39,11 @@
         name="update"
         type="text"
         maxlength="160"
-        placeholder="What are you doing?"
+        placeholder="Share what you're up to..."
         autocomplete="off"
         required
       >
-      <button type="submit">Add update</button>
+      <button type="submit"><span aria-hidden="true">+</span> Add update</button>
     </form>
     <p class="update-status" id="updateStatus" role="status" aria-live="polite"></p>
     <div class="updates-table-wrap">
@@ -44,6 +53,7 @@
           <tr>
             <th scope="col">Time</th>
             <th scope="col">Update</th>
+            <th scope="col"><span class="sr-only">Actions</span></th>
           </tr>
         </thead>
         <tbody id="updatesList"></tbody>
@@ -141,17 +151,25 @@
     updatesList.replaceChildren();
     emptyUpdates.hidden = updates.length > 0;
 
-    updates.forEach(({ text, created_at }) => {
+    updates.forEach(({ id, text, created_at }) => {
       const row = document.createElement("tr");
       const timeCell = document.createElement("td");
       const textCell = document.createElement("td");
+      const actionCell = document.createElement("td");
+      const deleteButton = document.createElement("button");
 
+      row.dataset.id = id;
       timeCell.textContent = new Date(created_at).toLocaleTimeString([], {
         hour: "numeric",
         minute: "2-digit"
       });
       textCell.textContent = text;
-      row.append(timeCell, textCell);
+      deleteButton.type = "button";
+      deleteButton.className = "delete-update";
+      deleteButton.textContent = "Delete";
+      deleteButton.setAttribute("aria-label", `Delete update: ${text}`);
+      actionCell.append(deleteButton);
+      row.append(timeCell, textCell, actionCell);
       updatesList.append(row);
     });
   }
@@ -164,7 +182,7 @@
 
     const { data, error } = await supabaseClient
       .from("countdown_updates")
-      .select("text, created_at")
+      .select("id, text, created_at")
       .eq("channel", updateChannel)
       .eq("update_date", getToday())
       .order("created_at", { ascending: true });
@@ -213,6 +231,39 @@
     } catch (error) {
       updateStatus.textContent = "Could not add update. Please try again.";
       console.error("Could not add update:", error);
+    }
+  });
+
+  updatesList.addEventListener("click", async (event) => {
+    const deleteButton = event.target.closest(".delete-update");
+    if (!deleteButton || !supabaseClient) {
+      return;
+    }
+
+    const row = deleteButton.closest("tr");
+    const id = row.dataset.id;
+    deleteButton.disabled = true;
+    updateStatus.textContent = "Deleting update...";
+
+    try {
+      const { error } = await supabaseClient
+        .from("countdown_updates")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        updateStatus.textContent = "Could not delete update. Please try again.";
+        console.error("Could not delete update:", error);
+        deleteButton.disabled = false;
+        return;
+      }
+
+      updateStatus.textContent = "Update deleted.";
+      await loadUpdates();
+    } catch (error) {
+      updateStatus.textContent = "Could not delete update. Please try again.";
+      console.error("Could not delete update:", error);
+      deleteButton.disabled = false;
     }
   });
 

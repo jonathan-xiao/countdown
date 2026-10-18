@@ -20,4 +20,10 @@ for insert
 to anon
 with check (true);
 
+create policy "Anyone can delete countdown updates"
+on public.countdown_updates
+for delete
+to anon
+using (true);
+
 alter publication supabase_realtime add table public.countdown_updates;

@@ -1,17 +1,27 @@
 :root {
-  --bg: #f2f4f8;
-  --ink: #14213d;
-  --muted: #5d6b86;
-  --accent: #3a5bff;
+  --bg: #f5f7fb;
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-solid: #ffffff;
+  --ink: #18233d;
+  --muted: #71809c;
+  --line: #e5eaf3;
+  --accent: #536dfe;
+  --accent-dark: #4057df;
+  --shadow: 0 24px 70px rgba(45, 65, 112, 0.12);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #101a30;
-    --ink: #eef1f8;
-    --muted: #97a4c2;
-    --accent: #8fa4ff;
+    --bg: #11182b;
+    --surface: rgba(27, 38, 66, 0.82);
+    --surface-solid: #1b2642;
+    --ink: #f2f5ff;
+    --muted: #a3b0cf;
+    --line: #34415f;
+    --accent: #9aaaff;
+    --accent-dark: #b1bcff;
+    --shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
     color-scheme: dark;
   }
 }
@@ -22,15 +32,19 @@
 
 html,
 body {
-  height: 100%;
+  min-height: 100%;
   margin: 0;
 }
 
 body {
   display: grid;
   place-items: center;
-  padding: env(safe-area-inset-top, 0) 24px env(safe-area-inset-bottom, 0);
-  background: var(--bg);
+  padding: max(1.5rem, env(safe-area-inset-top, 0)) 20px
+    max(1.5rem, env(safe-area-inset-bottom, 0));
+  background:
+    radial-gradient(circle at 15% 10%, rgba(83, 109, 254, 0.14), transparent 30rem),
+    radial-gradient(circle at 90% 80%, rgba(146, 111, 255, 0.1), transparent 26rem),
+    var(--bg);
   color: var(--ink);
   font-family: "Fraunces", Georgia, "Times New Roman", serif;
   text-align: center;
@@ -38,13 +52,35 @@ body {
 
 main {
   width: 100%;
-  max-width: 640px;
-  padding: 2rem 0;
+  max-width: 680px;
+  padding: 1rem 0;
+}
+
+.countdown-card,
+.updates {
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 1.5rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.countdown-card {
+  padding: clamp(2rem, 6vw, 3.5rem) 1.5rem 2rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.7rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 h1 {
-  margin: 0 0 1.5rem;
-  font-size: clamp(1.4rem, 5vw, 2rem);
+  margin: 0 0 1.4rem;
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
   font-weight: 500;
   letter-spacing: 0.01em;
 }
@@ -54,8 +90,9 @@ h1 {
   color: var(--accent);
   font-size: clamp(7rem, 34vw, 14rem);
   font-weight: 300;
-  line-height: 0.9;
+  line-height: 0.82;
   font-variant-numeric: tabular-nums;
+  text-shadow: 0 8px 24px rgba(83, 109, 254, 0.16);
 }
 
 .days--today {
@@ -63,34 +100,68 @@ h1 {
 }
 
 .days-label {
-  margin: 0.5rem 0 2rem;
+  margin: 0.8rem 0 1.8rem;
   color: var(--muted);
   font-size: clamp(1.1rem, 4vw, 1.5rem);
 }
 
 .clock {
   margin: 0;
-  font-size: clamp(1.4rem, 6vw, 2rem);
+  font-size: clamp(1.45rem, 6vw, 2.1rem);
   font-variant-numeric: tabular-nums;
 }
 
 .when {
-  margin: 1.5rem 0 0;
+  margin: 0.8rem 0 0;
   color: var(--muted);
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .updates {
-  margin-top: 3rem;
+  margin-top: 1.2rem;
+  padding: 1.4rem;
   text-align: left;
 }
 
+.updates-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 1.2rem;
+}
+
+.updates-heading .eyebrow {
+  margin-bottom: 0.3rem;
+}
+
 .updates h2 {
-  margin: 0 0 1rem;
-  color: var(--ink);
-  font-size: 1.25rem;
+  margin: 0;
+  font-size: 1.5rem;
   font-weight: 500;
-  text-align: center;
+}
+
+.updates-badge {
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  color: var(--accent);
+  font-family: system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.updates-badge::before {
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-right: 0.35rem;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
+  vertical-align: 0.05em;
 }
 
 .update-form {
@@ -101,12 +172,13 @@ h1 {
 .update-form input {
   min-width: 0;
   flex: 1;
-  border: 1px solid var(--muted);
-  border-radius: 0.4rem;
-  padding: 0.7rem 0.8rem;
-  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  padding: 0.8rem 0.95rem;
+  background: var(--surface-solid);
   color: var(--ink);
   font: inherit;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
 .update-form input::placeholder {
@@ -115,37 +187,61 @@ h1 {
 
 .update-form button {
   border: 0;
-  border-radius: 0.4rem;
-  padding: 0.7rem 1rem;
+  border-radius: 0.75rem;
+  padding: 0.8rem 1rem;
   background: var(--accent);
-  color: var(--bg);
+  color: #fff;
   cursor: pointer;
   font: inherit;
   font-weight: 500;
+  white-space: nowrap;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.update-form button span {
+  margin-right: 0.2rem;
+  font-family: system-ui, sans-serif;
+  font-size: 1.1em;
 }
 
 .update-form button:hover {
-  opacity: 0.9;
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+.update-form button:disabled,
+.delete-update:disabled {
+  cursor: wait;
+  opacity: 0.55;
 }
 
 .update-form input:focus-visible,
-.update-form button:focus-visible {
+.update-form button:focus-visible,
+.delete-update:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
+.update-form input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+  outline: 0;
+}
+
 .update-status {
   min-height: 1.25rem;
-  margin: 0.5rem 0 0;
+  margin: 0.6rem 0 0;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-family: system-ui, sans-serif;
+  font-size: 0.78rem;
   text-align: center;
 }
 
 .updates-table-wrap {
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--muted) 35%, transparent);
-  border-radius: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: var(--surface-solid);
 }
 
 .updates-table {
@@ -156,33 +252,69 @@ h1 {
 
 .updates-table th,
 .updates-table td {
-  padding: 0.7rem 0.8rem;
+  padding: 0.8rem 0.9rem;
   text-align: left;
 }
 
 .updates-table th {
   color: var(--muted);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
+  font-family: system-ui, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
+.updates-table th:last-child,
+.updates-table td:last-child {
+  width: 1%;
+  text-align: right;
+  white-space: nowrap;
+}
+
 .updates-table td:first-child {
-  width: 6rem;
+  width: 5.5rem;
   color: var(--muted);
+  font-family: system-ui, sans-serif;
+  font-size: 0.8rem;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .updates-table tbody tr + tr {
-  border-top: 1px solid color-mix(in srgb, var(--muted) 20%, transparent);
+  border-top: 1px solid var(--line);
+}
+
+.updates-table tbody tr {
+  transition: background 160ms ease;
+}
+
+.updates-table tbody tr:hover {
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
+.delete-update {
+  border: 0;
+  border-radius: 0.45rem;
+  padding: 0.35rem 0.5rem;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: system-ui, sans-serif;
+  font-size: 0.72rem;
+}
+
+.delete-update:hover {
+  background: #fff0f0;
+  color: #c34855;
 }
 
 .empty-updates {
   margin: 0;
-  padding: 1rem;
+  padding: 1.2rem;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-family: system-ui, sans-serif;
+  font-size: 0.85rem;
   text-align: center;
 }
 
@@ -198,11 +330,24 @@ h1 {
 }
 
 @media (max-width: 480px) {
+  .countdown-card {
+    padding-inline: 1rem;
+  }
+
+  .updates {
+    padding: 1rem;
+  }
+
   .update-form {
     flex-direction: column;
   }
 
   .update-form button {
     width: 100%;
+  }
+
+  .updates-table th,
+  .updates-table td {
+    padding-inline: 0.65rem;
   }
 }
