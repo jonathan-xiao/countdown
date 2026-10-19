@@ -28,3 +28,15 @@ Supabase SQL Editor. New updates can then be labeled **Boyfriend** or
 Updates older than 7 days are automatically removed for the current countdown
 link when the page loads. The **Clear today&rsquo;s updates** button remains
 available for immediate manual cleanup.
+
+## Countdown time
+
+The countdown can target a specific local time using the `time` URL parameter
+in 24-hour `HH:MM` format:
+
+```text
+?date=2026-12-20&time=07:50&title=Morning
+```
+
+If `time` is omitted, the countdown targets midnight as before. Each device
+interprets the target in its own local timezone.

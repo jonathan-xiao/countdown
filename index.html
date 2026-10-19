@@ -80,24 +80,38 @@
 <script>
   // Edit these defaults
   const DEFAULT_DATE  = "2026-11-08";  // YYYY-MM-DD
+  const DEFAULT_TIME  = "07:50";       // HH:MM, local time
   const DEFAULT_TITLE = "COUNTDOWN";
 
   const params = new URLSearchParams(location.search);
   const dateStr = params.get("date") || DEFAULT_DATE;
+  const timeStr = params.get("time") || DEFAULT_TIME;
   const title   = params.get("title") || DEFAULT_TITLE;
 
-  // Parse as local midnight
-  const [y, m, d] = dateStr.split("-").map(Number);
-  const target = new Date(y, m - 1, d, 0, 0, 0);
+  // Parse as local time instead of UTC so the countdown follows the device.
+  const dateParts = dateStr.split("-").map(Number);
+  const timeParts = timeStr.split(":").map(Number);
+  const hasValidDate = /^\d{4}-\d{2}-\d{2}$/.test(dateStr) &&
+    dateParts.length === 3 && dateParts.every(Number.isFinite);
+  const hasValidTime = /^\d{2}:\d{2}$/.test(timeStr) &&
+    timeParts.length === 2 && timeParts.every(Number.isFinite) &&
+    timeParts[0] >= 0 && timeParts[0] <= 23 &&
+    timeParts[1] >= 0 && timeParts[1] <= 59;
+  const target = hasValidDate && hasValidTime
+    ? new Date(dateParts[0], dateParts[1] - 1, dateParts[2], timeParts[0], timeParts[1], 0)
+    : new Date(NaN);
 
   const $ = (id) => document.getElementById(id);
   const pad = (n) => String(n).padStart(2, "0");
 
   $("title").textContent = title;
   document.title = title;
-  $("when").textContent = target.toLocaleDateString(undefined, {
-    weekday: "long", year: "numeric", month: "long", day: "numeric"
-  });
+  if (!isNaN(target)) {
+    $("when").textContent = target.toLocaleString(undefined, {
+      weekday: "long", year: "numeric", month: "long", day: "numeric",
+      ...(params.has("time") ? { hour: "numeric", minute: "2-digit" } : {})
+    });
+  }
 
   function tick() {
     const diff = target - new Date();
